@@ -1,0 +1,139 @@
+{
+	"name": "Event sheet 1",
+	"events": [
+		{
+			"eventType": "variable",
+			"name": "Index",
+			"type": "number",
+			"initialValue": "1",
+			"comment": "",
+			"isStatic": false,
+			"isConstant": false,
+			"sid": 197056248975011
+		},
+		{
+			"eventType": "comment",
+			"text": "On startup, load the text of the project file info.json using the AJAX object. Open info.json in the Project Bar to see its contents."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-start-of-layout",
+					"objectClass": "System",
+					"sid": 884512974938759
+				}
+			],
+			"actions": [
+				{
+					"id": "request-url",
+					"objectClass": "AJAX",
+					"sid": 260072874061342,
+					"parameters": {
+						"tag": "\"\"",
+						"url": "\"https://takuy-xiesandi-default-rtdb.asia-southeast1.firebasedatabase.app/.json\""
+					}
+				}
+			],
+			"sid": 261948757375896
+		},
+		{
+			"eventType": "comment",
+			"text": "Once the JSON file's text has been loaded, read it as JSON using the JSON object."
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-completed",
+					"objectClass": "AJAX",
+					"sid": 292674262619376,
+					"parameters": {
+						"tag": "\"\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "parse",
+					"objectClass": "JSON",
+					"sid": 834842093510359,
+					"parameters": {
+						"data": "AJAX.LastData"
+					}
+				},
+				{
+					"id": "set-text",
+					"objectClass": "Text2",
+					"sid": 870842806151908,
+					"parameters": {
+						"text": "JSON.Get(\".test.\"&Index&\".username\")"
+					}
+				}
+			],
+			"sid": 101252005935462,
+			"children": [
+				{
+					"eventType": "comment",
+					"text": "Iterate each array element in the root \"books\" key. Note during the loop, paths are relative to the current array element, so getting the value at \".title\" returns the title of the current book in the \"books\" array."
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "for-each",
+							"objectClass": "JSON",
+							"sid": 916228211766852,
+							"parameters": {
+								"path": "\".test\""
+							}
+						}
+					],
+					"actions": [
+						{
+							"id": "append-text",
+							"objectClass": "Text",
+							"sid": 259330011175597,
+							"parameters": {
+								"text": "\"Book title: \" & JSON.Get(\".username\")& newline"
+							}
+						}
+					],
+					"sid": 161542586634798,
+					"children": [
+						{
+							"eventType": "comment",
+							"text": "Iterate each name in the array of \"authors\". This time we can list the current loop value, since each array element is a string."
+						},
+						{
+							"eventType": "block",
+							"conditions": [
+								{
+									"id": "for-each",
+									"objectClass": "JSON",
+									"sid": 256522675349047,
+									"parameters": {
+										"path": "\".authors\""
+									}
+								}
+							],
+							"actions": [
+								{
+									"id": "append-text",
+									"objectClass": "Text",
+									"sid": 632170108623747,
+									"parameters": {
+										"text": "\"    Author: \" & JSON.CurrentValue & newline"
+									}
+								}
+							],
+							"sid": 701292236411382,
+							"disabled": true
+						}
+					]
+				}
+			]
+		}
+	],
+	"sid": 245476393751618
+}
