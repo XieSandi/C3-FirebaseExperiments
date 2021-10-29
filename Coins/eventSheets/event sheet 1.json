@@ -1,0 +1,545 @@
+{
+	"name": "Event sheet 1",
+	"events": [
+		{
+			"eventType": "variable",
+			"name": "COINS",
+			"type": "number",
+			"initialValue": "0",
+			"comment": "",
+			"isStatic": false,
+			"isConstant": false,
+			"sid": 551515639034314
+		},
+		{
+			"eventType": "variable",
+			"name": "IDtoogle",
+			"type": "number",
+			"initialValue": "0",
+			"comment": "",
+			"isStatic": false,
+			"isConstant": false,
+			"sid": 959162323076150
+		},
+		{
+			"eventType": "variable",
+			"name": "UserID",
+			"type": "string",
+			"initialValue": "",
+			"comment": "",
+			"isStatic": false,
+			"isConstant": false,
+			"sid": 320627499673897
+		},
+		{
+			"eventType": "variable",
+			"name": "StrCoins",
+			"type": "string",
+			"initialValue": "",
+			"comment": "",
+			"isStatic": false,
+			"isConstant": false,
+			"sid": 916309677000550
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-start-of-layout",
+					"objectClass": "System",
+					"sid": 554753645930973
+				}
+			],
+			"actions": [
+				{
+					"id": "check-item-exists",
+					"objectClass": "LocalStorage",
+					"sid": 269243984525613,
+					"parameters": {
+						"key": "\"id\""
+					}
+				}
+			],
+			"sid": 894270184215302
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-item-exists",
+					"objectClass": "LocalStorage",
+					"sid": 488744739783124,
+					"parameters": {
+						"key": "\"id\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "get-item",
+					"objectClass": "LocalStorage",
+					"sid": 665606536859905,
+					"parameters": {
+						"key": "\"id\""
+					}
+				}
+			],
+			"sid": 105947942807337
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-item-get",
+					"objectClass": "LocalStorage",
+					"sid": 188866307260684,
+					"parameters": {
+						"key": "\"id\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 127226713860825,
+					"parameters": {
+						"variable": "UserID",
+						"value": "LocalStorage.ItemValue"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 829326847575507,
+					"parameters": {
+						"variable": "IDtoogle",
+						"value": "1"
+					}
+				}
+			],
+			"sid": 367064060481189
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-item-missing",
+					"objectClass": "LocalStorage",
+					"sid": 203860272915821,
+					"parameters": {
+						"key": "\"id\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 854013059690022,
+					"parameters": {
+						"variable": "UserID",
+						"value": "\"\""
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 841106472682609,
+					"parameters": {
+						"variable": "IDtoogle",
+						"value": "0"
+					}
+				}
+			],
+			"sid": 720898099595369
+		},
+		{
+			"eventType": "comment",
+			"text": "SAVE GAME TO FIREBASE"
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-clicked",
+					"objectClass": "save",
+					"sid": 262503158587729
+				}
+			],
+			"actions": [],
+			"sid": 849581167455910,
+			"children": [
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "compare-eventvar",
+							"objectClass": "System",
+							"sid": 498638182784512,
+							"parameters": {
+								"variable": "IDtoogle",
+								"comparison": 0,
+								"value": "0"
+							}
+						}
+					],
+					"actions": [
+						{
+							"type": "comment",
+							"text": "IF VARIABLE IS 0 DOESNT EXIST AN ID AND WILL BE CREATED WITH POST"
+						},
+						{
+							"id": "post-to-url",
+							"objectClass": "AJAX",
+							"sid": 133007201157437,
+							"parameters": {
+								"tag": "\"registerID\"",
+								"url": "\"https://takuy-xiesandi-default-rtdb.asia-southeast1.firebasedatabase.app/coins.json\"",
+								"data": "\"{\"\"coins\"\" : \"\"\"&coins&\"\"\"}\"",
+								"method": "\"POST\""
+							}
+						}
+					],
+					"sid": 619137474203446
+				},
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "compare-eventvar",
+							"objectClass": "System",
+							"sid": 941811152707967,
+							"parameters": {
+								"variable": "IDtoogle",
+								"comparison": 0,
+								"value": "1"
+							}
+						}
+					],
+					"actions": [
+						{
+							"type": "comment",
+							"text": "NOW WE JUST UPDATE THE VALUES NOT POS ANYMOR OTHERWISE NEW ID WILL BE CREATED"
+						},
+						{
+							"type": "comment",
+							"text": "SEE THE TRICK IS HERE , INSTED OF POST WE NEED TO PUT A \" PATCH \" TO GOOGLE UNDERSTAND"
+						},
+						{
+							"id": "post-to-url",
+							"objectClass": "AJAX",
+							"sid": 387378828262494,
+							"parameters": {
+								"tag": "\"Updatedata\"",
+								"url": "\"https://takuy-xiesandi-default-rtdb.asia-southeast1.firebasedatabase.app/coins/\"&UserID&\".json\"",
+								"data": "\"{\"\"coins\"\" : \"\"\"&coins&\"\"\"}\"",
+								"method": "\"PATCH\""
+							}
+						}
+					],
+					"sid": 595673516043137
+				}
+			]
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-completed",
+					"objectClass": "AJAX",
+					"sid": 519251859592079,
+					"parameters": {
+						"tag": "\"registerID\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 555238817673962,
+					"parameters": {
+						"variable": "UserID",
+						"value": "AJAX.LastData"
+					}
+				},
+				{
+					"type": "comment",
+					"text": "REPLACE THE { \" , :  FOR NOTHING TO REMOVE DATA WE DONT WANT"
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 534048876290645,
+					"parameters": {
+						"variable": "UserID",
+						"value": "replace(UserID,\"{\"\"\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 493468272370985,
+					"parameters": {
+						"variable": "UserID",
+						"value": "replace(UserID,\"name\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 518963402099361,
+					"parameters": {
+						"variable": "UserID",
+						"value": "replace(UserID,\"\"\"}\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 415372501589518,
+					"parameters": {
+						"variable": "UserID",
+						"value": "replace(UserID,\"\"\":\"\"\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 362554720379524,
+					"parameters": {
+						"variable": "IDtoogle",
+						"value": "1"
+					}
+				},
+				{
+					"id": "set-item",
+					"objectClass": "LocalStorage",
+					"sid": 474907755404621,
+					"parameters": {
+						"key": "\"id\"",
+						"value": "UserID"
+					}
+				}
+			],
+			"sid": 259438968029321
+		},
+		{
+			"eventType": "comment",
+			"text": "LOAD THE GAME FROM FIREBASE"
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-clicked",
+					"objectClass": "loadgame",
+					"sid": 900099625360637
+				},
+				{
+					"id": "on-start-of-layout",
+					"objectClass": "System",
+					"sid": 600572914954319
+				}
+			],
+			"actions": [
+				{
+					"type": "comment",
+					"text": "WAIT A BIT TO LOAD FROM LOCALSTORAGE FIRST"
+				},
+				{
+					"id": "wait-for-previous-actions",
+					"objectClass": "System",
+					"sid": 354761805089001
+				},
+				{
+					"id": "wait",
+					"objectClass": "System",
+					"sid": 127612863930267,
+					"parameters": {
+						"seconds": "0.1"
+					}
+				}
+			],
+			"sid": 924246208915812,
+			"children": [
+				{
+					"eventType": "block",
+					"conditions": [
+						{
+							"id": "compare-eventvar",
+							"objectClass": "System",
+							"sid": 155190144562293,
+							"parameters": {
+								"variable": "IDtoogle",
+								"comparison": 0,
+								"value": "1"
+							}
+						}
+					],
+					"actions": [
+						{
+							"id": "request-url",
+							"objectClass": "AJAX",
+							"sid": 621789984551336,
+							"parameters": {
+								"tag": "\"Getdata\"",
+								"url": "\"https://takuy-xiesandi-default-rtdb.asia-southeast1.firebasedatabase.app/coins/\"&UserID&\".json\""
+							}
+						}
+					],
+					"sid": 680609346798365
+				}
+			],
+			"isOrBlock": true
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-completed",
+					"objectClass": "AJAX",
+					"sid": 192032846036833,
+					"parameters": {
+						"tag": "\"Getdata\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 568719642204877,
+					"parameters": {
+						"variable": "StrCoins",
+						"value": "AJAX.LastData"
+					}
+				},
+				{
+					"type": "comment",
+					"text": "REPLACE THE { \" , :  FOR NOTHING TO REMOVE DATA WE DONT WANT"
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 700701794298166,
+					"parameters": {
+						"variable": "StrCoins",
+						"value": "replace(StrCoins,\"{\"\"\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 583949653134798,
+					"parameters": {
+						"variable": "StrCoins",
+						"value": "replace(StrCoins,\"coins\"\"\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 757634062359363,
+					"parameters": {
+						"variable": "StrCoins",
+						"value": "replace(StrCoins,\":\"\"\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 481794872247132,
+					"parameters": {
+						"variable": "StrCoins",
+						"value": "replace(StrCoins,\"\"\"}\",\"\")"
+					}
+				},
+				{
+					"id": "set-eventvar-value",
+					"objectClass": "System",
+					"sid": 534504732270427,
+					"parameters": {
+						"variable": "COINS",
+						"value": "StrCoins"
+					}
+				}
+			],
+			"sid": 950967145342988
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "every-tick",
+					"objectClass": "System",
+					"sid": 900767978664178
+				}
+			],
+			"actions": [
+				{
+					"id": "set-text",
+					"objectClass": "userid",
+					"sid": 219423976091336,
+					"parameters": {
+						"text": "\" User ID : \" &UserID"
+					}
+				},
+				{
+					"id": "set-text",
+					"objectClass": "TextCOINS",
+					"sid": 653014628771003,
+					"parameters": {
+						"text": "\" COINS :  \"&COINS"
+					}
+				}
+			],
+			"sid": 450210627146225
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-tap-object",
+					"objectClass": "Touch",
+					"sid": 759111550444092,
+					"parameters": {
+						"object": "COIN"
+					}
+				}
+			],
+			"actions": [
+				{
+					"id": "add-to-eventvar",
+					"objectClass": "System",
+					"sid": 321538079578503,
+					"parameters": {
+						"variable": "COINS",
+						"value": "1"
+					}
+				}
+			],
+			"sid": 501989564686354
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-clicked",
+					"objectClass": "Button",
+					"sid": 927343905769921
+				}
+			],
+			"actions": [
+				{
+					"id": "clear-storage",
+					"objectClass": "LocalStorage",
+					"sid": 653820195383014
+				}
+			],
+			"sid": 781552321504988
+		}
+	],
+	"sid": 633078166135079
+}
